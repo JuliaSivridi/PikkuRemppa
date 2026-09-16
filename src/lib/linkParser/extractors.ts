@@ -91,15 +91,92 @@ export function parseOpenGraph(doc: Document): ParsedProduct | null {
   return { name: name || undefined, price, imageUrl }
 }
 
+// Extracts the JSON object assigned to `window.<varName>` in an inline <script>, handling
+// nested braces and braces inside string values (a plain regex up to the first "}" would
+// truncate on the first nested object).
+function extractWindowVar(html: string, varName: string): unknown {
+  const markers = [`window.${varName} = window.${varName} || `, `window.${varName} = `]
+  let braceStart = -1
+  for (const marker of markers) {
+    const idx = html.indexOf(marker)
+    if (idx !== -1) {
+      braceStart = idx + marker.length
+      break
+    }
+  }
+  if (braceStart === -1 || html[braceStart] !== '{') return undefined
+
+  let depth = 0
+  let inString = false
+  let escaped = false
+  for (let i = braceStart; i < html.length; i++) {
+    const char = html[i]
+    if (escaped) {
+      escaped = false
+    } else if (char === '\\') {
+      escaped = true
+    } else if (char === '"') {
+      inString = !inString
+    } else if (!inString) {
+      if (char === '{') depth++
+      else if (char === '}') {
+        depth--
+        if (depth === 0) {
+          try {
+            return JSON.parse(html.slice(braceStart, i + 1))
+          } catch {
+            return undefined
+          }
+        }
+      }
+    }
+  }
+  return undefined
+}
+
+interface BiltemaProductData {
+  mainImageUrl?: string
+  variations?: { name?: string; priceIncVAT?: number }[]
+}
+
+// Biltema doesn't put product data in the static HTML at all — it's assembled client-side
+// from a `window.productData` object into a JSON-LD <script> that Jina's renderer sometimes
+// doesn't wait long enough for. `window.productData` itself, though, is plain inline JSON
+// already present in the first response, so it's read directly instead.
+export function parseBiltemaProductData(html: string): ParsedProduct | null {
+  const data = extractWindowVar(html, 'productData') as BiltemaProductData | undefined
+  const variation = data?.variations?.[0]
+  if (!variation?.name && variation?.priceIncVAT === undefined) return null
+
+  return {
+    name: variation?.name,
+    price: variation?.priceIncVAT,
+    imageUrl: data?.mainImageUrl,
+  }
+}
+
 const HOME_CRUMB_LABELS = new Set(['etusivu', 'home', 'koti', 'start', 'hem'])
 
 // Most storefronts render a visible breadcrumb nav (Etusivu > Category > Subcategory [> Product]).
 // JSON-LD BreadcrumbList data turned out to be missing or truncated on several sites we tested
-// against, so this reads the rendered nav text instead.
+// against, so this reads the rendered nav text instead. Some sites mark it with a class
+// ("nav.breadcrumb"), others only with an id ("#breadcrumb-navigation"), so both are checked.
 export function parseBreadcrumbs(doc: Document): string[] {
-  const nav = doc.querySelector('nav[aria-label="breadcrumb" i], nav.breadcrumb, [class*="breadcrumb" i]')
+  const nav = doc.querySelector(
+    'nav[aria-label="breadcrumb" i], nav.breadcrumb, [id*="breadcrumb" i], [class*="breadcrumb" i]',
+  )
   if (!nav) return []
-  const items = Array.from(nav.querySelectorAll('a, span, li'))
+
+  // Prefer <a> text: breadcrumb icons (e.g. Material Icons ligatures like "chevron_right")
+  // sit inside the same <li>/<span> as the label and would otherwise pollute the text. The
+  // current page is also conventionally the one crumb that isn't a link, which is exactly
+  // the one we don't want here (that's the product name, not a category).
+  const links = Array.from(nav.querySelectorAll('a'))
+    .map((el) => el.textContent?.trim() ?? '')
+    .filter(Boolean)
+  if (links.length > 0) return [...new Set(links)]
+
+  const items = Array.from(nav.querySelectorAll('span, li'))
     .map((el) => el.textContent?.trim() ?? '')
     .filter(Boolean)
   return [...new Set(items)]
