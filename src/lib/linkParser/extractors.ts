@@ -90,3 +90,30 @@ export function parseOpenGraph(doc: Document): ParsedProduct | null {
   if (!name && price === undefined && !imageUrl) return null
   return { name: name || undefined, price, imageUrl }
 }
+
+const HOME_CRUMB_LABELS = new Set(['etusivu', 'home', 'koti', 'start', 'hem'])
+
+// Most storefronts render a visible breadcrumb nav (Etusivu > Category > Subcategory [> Product]).
+// JSON-LD BreadcrumbList data turned out to be missing or truncated on several sites we tested
+// against, so this reads the rendered nav text instead.
+export function parseBreadcrumbs(doc: Document): string[] {
+  const nav = doc.querySelector('nav[aria-label="breadcrumb" i], nav.breadcrumb, [class*="breadcrumb" i]')
+  if (!nav) return []
+  const items = Array.from(nav.querySelectorAll('a, span, li'))
+    .map((el) => el.textContent?.trim() ?? '')
+    .filter(Boolean)
+  return [...new Set(items)]
+}
+
+// Picks the most specific breadcrumb crumb that isn't the product itself and isn't a
+// generic "home" root, to suggest a material category (e.g. "Ilmastointiteippi", "Ikkunapellit").
+export function suggestCategoryFromBreadcrumbs(crumbs: string[], productName?: string): string | undefined {
+  const name = (productName ?? '').trim().toLowerCase()
+  const trail = crumbs.filter((c) => !HOME_CRUMB_LABELS.has(c.trim().toLowerCase()))
+
+  for (let i = trail.length - 1; i >= 0; i--) {
+    const candidate = trail[i].trim()
+    if (candidate && candidate.toLowerCase() !== name) return candidate
+  }
+  return undefined
+}

@@ -5,10 +5,10 @@ type Filters = ReturnType<typeof useRepairFilters>
 
 export function RepairFilters(filters: Filters) {
   return (
-    <aside className="repair-filters">
+    <div className="filter-panel">
       <button
         type="button"
-        className="button button--secondary repair-filters__reset"
+        className="button button--secondary filter-panel__reset"
         disabled={!filters.hasActiveFilters}
         onClick={filters.reset}
       >
@@ -33,6 +33,7 @@ export function RepairFilters(filters: Filters) {
             className="field__input"
             type="number"
             min={0}
+            step="any"
             placeholder="alkaen"
             value={filters.costMin ?? ''}
             onChange={(e) => filters.setCostMin(e.target.value === '' ? undefined : Number(e.target.value))}
@@ -42,6 +43,7 @@ export function RepairFilters(filters: Filters) {
             className="field__input"
             type="number"
             min={0}
+            step="any"
             placeholder="asti"
             value={filters.costMax ?? ''}
             onChange={(e) => filters.setCostMax(e.target.value === '' ? undefined : Number(e.target.value))}
@@ -62,6 +64,6 @@ export function RepairFilters(filters: Filters) {
         selected={filters.priorityIds}
         onToggle={filters.togglePriority}
       />
-    </aside>
+    </div>
   )
 }

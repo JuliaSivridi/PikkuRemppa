@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { DraftMaterial, DraftMaterialRow, MaterialCategory } from '../../types'
 import { parseProductUrl } from '../../lib/linkParser'
+import { useStore } from '../../store/store'
 import { DynamicFieldInput } from './DynamicFieldInput'
 
 interface MaterialFieldRowProps {
@@ -15,6 +16,7 @@ type ParseStatus = 'idle' | 'loading' | 'success' | 'error'
 export function MaterialFieldRow({ material, categories, onChange, onRemove }: MaterialFieldRowProps) {
   const [parseStatus, setParseStatus] = useState<ParseStatus>('idle')
   const [parseMessage, setParseMessage] = useState<string>('')
+  const addCategory = useStore((s) => s.addCategory)
 
   const category = categories.find((c) => c.id === material.categoryId)
 
@@ -35,9 +37,28 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
       const patch: Partial<DraftMaterial> = {}
       if (!material.name && result.data.name) patch.name = result.data.name
       if (material.price === undefined && result.data.price !== undefined) patch.price = result.data.price
+
+      let categoryCreated = false
+      if (!material.categoryId && result.data.suggestedCategory) {
+        const existing = categories.find(
+          (c) => c.name.toLowerCase() === result.data.suggestedCategory!.toLowerCase(),
+        )
+        if (existing) {
+          patch.categoryId = existing.id
+        } else {
+          patch.categoryId = addCategory(result.data.suggestedCategory)
+          patch.fieldValues = {}
+          categoryCreated = true
+        }
+      }
+
       onChange(patch)
       setParseStatus('success')
-      setParseMessage('Tiedot täytetty automaattisesti (tarkista ennen tallennusta)')
+      setParseMessage(
+        categoryCreated
+          ? `Tiedot täytetty automaattisesti. Loimme uuden kategorian "${result.data.suggestedCategory}" — muokkaa sen kenttiä asetuksissa tarvittaessa.`
+          : 'Tiedot täytetty automaattisesti (tarkista ennen tallennusta)',
+      )
     } else {
       setParseStatus('error')
       setParseMessage('Tuotesivun hakeminen epäonnistui — täytä tiedot käsin')
@@ -84,6 +105,7 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
             className="field__input"
             type="number"
             min={0}
+            step="any"
             value={material.quantity ?? ''}
             onChange={(e) => onChange({ quantity: e.target.value === '' ? undefined : Number(e.target.value) })}
           />
@@ -104,6 +126,7 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
             className="field__input"
             type="number"
             min={0}
+            step="any"
             value={material.price ?? ''}
             onChange={(e) => onChange({ price: e.target.value === '' ? undefined : Number(e.target.value) })}
           />

@@ -75,6 +75,7 @@ export function AddRepairForm({ onClose }: AddRepairFormProps) {
               className="field__input"
               type="number"
               min={0}
+              step="any"
               value={cost ?? ''}
               onChange={(e) => setCost(e.target.value === '' ? undefined : Number(e.target.value))}
             />

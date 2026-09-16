@@ -376,22 +376,25 @@
   color: var(--color-text-muted);
 }
 
-/* Materials view */
-.materials-view {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-.materials-view__list {
-  flex: 1;
+/* List views (repairs + materials) and their filter toolbar */
+.list-view {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  min-width: 0;
 }
 
-.materials-view .material-row {
+.list-view__toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.materials-view__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.materials-view__list .material-row {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -399,14 +402,46 @@
   padding: 12px 16px;
 }
 
-.tag-cloud {
-  width: 220px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 80px;
+/* Filter trigger button, shown in the toolbar on every screen size */
+.filter-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+}
+
+.filter-button:hover {
+  background: var(--color-bg);
+}
+
+.filter-button__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  font-size: 0.75rem;
+}
+
+/* Filter panel content, rendered inside a Modal on any screen size */
+.filter-panel {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
+}
+
+.filter-panel__reset {
+  width: 100%;
 }
 
 .tag-cloud__title {
@@ -419,52 +454,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-}
-
-@media (max-width: 640px) {
-  .materials-view,
-  .repairs-view {
-    flex-direction: column;
-  }
-  .tag-cloud,
-  .repair-filters {
-    width: 100%;
-    position: static;
-  }
-}
-
-/* Repairs view + filters */
-.repairs-view {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-.repairs-view__list {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 0;
-}
-
-.repair-filters {
-  width: 220px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 80px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 16px;
-  box-shadow: var(--shadow);
-}
-
-.repair-filters__reset {
-  width: 100%;
 }
 
 .repair-filters__cost {

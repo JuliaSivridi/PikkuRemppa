@@ -64,13 +64,15 @@ export function useRepairFilters(repairs: RepairWithMaterials[]) {
     })
   }, [repairs, search, roomIds, statusIds, priorityIds, costMin, costMax])
 
-  const hasActiveFilters =
-    search !== '' ||
-    roomIds.size > 0 ||
-    statusIds.size > 0 ||
-    priorityIds.size > 0 ||
-    costMin !== undefined ||
-    costMax !== undefined
+  const activeCount =
+    (search !== '' ? 1 : 0) +
+    roomIds.size +
+    statusIds.size +
+    priorityIds.size +
+    (costMin !== undefined ? 1 : 0) +
+    (costMax !== undefined ? 1 : 0)
+
+  const hasActiveFilters = activeCount > 0
 
   function reset() {
     setSearch('')
@@ -98,6 +100,7 @@ export function useRepairFilters(repairs: RepairWithMaterials[]) {
     toggleRoom: (id: string) => setRoomIds((prev) => toggleInSet(prev, id)),
     toggleStatus: (id: string) => setStatusIds((prev) => toggleInSet(prev, id)),
     togglePriority: (id: string) => setPriorityIds((prev) => toggleInSet(prev, id)),
+    activeCount,
     hasActiveFilters,
     reset,
   }

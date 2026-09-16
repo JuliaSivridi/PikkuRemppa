@@ -11,10 +11,10 @@ export function CategoryTagCloud({ categories, selected, onToggle, onClear }: Ca
   if (categories.length === 0) return null
 
   return (
-    <aside className="tag-cloud">
+    <div className="filter-panel">
       <button
         type="button"
-        className="button button--secondary repair-filters__reset"
+        className="button button--secondary filter-panel__reset"
         disabled={selected.size === 0}
         onClick={onClear}
       >
@@ -33,6 +33,6 @@ export function CategoryTagCloud({ categories, selected, onToggle, onClear }: Ca
           </button>
         ))}
       </div>
-    </aside>
+    </div>
   )
 }

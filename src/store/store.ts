@@ -24,7 +24,7 @@ interface AppState {
   addPriority: (name: string) => void
   removePriority: (id: string) => void
 
-  addCategory: (name: string) => void
+  addCategory: (name: string) => string
   renameCategory: (id: string, name: string) => void
   updateCategoryFields: (categoryId: string, fields: FieldDef[]) => void
   removeCategory: (id: string) => void
@@ -72,10 +72,13 @@ export const useStore = create<AppState>()(
       removePriority: (id) =>
         set((state) => ({ priorities: state.priorities.filter((p) => p.id !== id) })),
 
-      addCategory: (name) =>
+      addCategory: (name) => {
+        const id = generateId()
         set((state) => ({
-          materialCategories: [...state.materialCategories, { id: generateId(), name, fields: [] }],
-        })),
+          materialCategories: [...state.materialCategories, { id, name, fields: [] }],
+        }))
+        return id
+      },
 
       renameCategory: (id, name) =>
         set((state) => ({

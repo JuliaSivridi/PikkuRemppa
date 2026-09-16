@@ -2,6 +2,7 @@ export interface ParsedProduct {
   name?: string
   price?: number
   imageUrl?: string
+  suggestedCategory?: string
 }
 
 export type ParseResult =
