@@ -1,7 +1,20 @@
 export interface Room {
   id: string
   name: string
+  colorIndex?: number
 }
+
+export interface Status {
+  id: string
+  name: string
+}
+
+export interface Priority {
+  id: string
+  name: string
+}
+
+export type Executor = 'self' | 'service'
 
 export type FieldType = 'text' | 'number'
 
@@ -21,6 +34,9 @@ export interface Repair {
   id: string
   date: string // ISO date, yyyy-mm-dd
   roomId: string
+  statusId: string
+  priorityId?: string
+  executor?: Executor
   description: string
   cost: number
 }
@@ -43,8 +59,10 @@ export type DraftMaterial = Omit<Material, 'id' | 'repairId'>
 export type DraftMaterialRow = DraftMaterial & { _key: string }
 
 export interface PersistedData {
-  version: 1
+  version: 2
   rooms: Room[]
+  statuses: Status[]
+  priorities: Priority[]
   materialCategories: MaterialCategory[]
   repairs: Repair[]
   materials: Material[]

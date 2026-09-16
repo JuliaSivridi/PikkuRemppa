@@ -12,14 +12,15 @@ export function CategoryTagCloud({ categories, selected, onToggle, onClear }: Ca
 
   return (
     <aside className="tag-cloud">
-      <div className="tag-cloud__header">
-        <span className="tag-cloud__title">Фильтр по типу</span>
-        {selected.size > 0 && (
-          <button type="button" className="tag-cloud__clear" onClick={onClear}>
-            Сбросить
-          </button>
-        )}
-      </div>
+      <button
+        type="button"
+        className="button button--secondary repair-filters__reset"
+        disabled={selected.size === 0}
+        onClick={onClear}
+      >
+        Nollaa suodattimet
+      </button>
+      <span className="tag-cloud__title">Suodata tyypin mukaan</span>
       <div className="tag-cloud__tags">
         {categories.map((c) => (
           <button

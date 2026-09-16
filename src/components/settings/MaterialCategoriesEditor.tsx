@@ -20,7 +20,7 @@ export function MaterialCategoriesEditor() {
 
   return (
     <section className="settings-section">
-      <h3>Категории материалов</h3>
+      <h3>Materiaalikategoriat</h3>
       <ul className="settings-list">
         {categories.map((category) => (
           <li key={category.id} className="settings-list__item settings-list__item--stacked">
@@ -35,7 +35,7 @@ export function MaterialCategoriesEditor() {
               <button
                 type="button"
                 className="icon-button icon-button--danger"
-                aria-label="Удалить категорию"
+                aria-label="Poista kategoria"
                 onClick={() => removeCategory(category.id)}
               >
                 ×
@@ -49,19 +49,19 @@ export function MaterialCategoriesEditor() {
             )}
           </li>
         ))}
-        {categories.length === 0 && <li className="empty-state empty-state--inline">Категорий нет</li>}
+        {categories.length === 0 && <li className="empty-state empty-state--inline">Kategorioita ei ole</li>}
       </ul>
       <div className="settings-add-row">
         <input
           className="field__input"
           type="text"
-          placeholder="Название категории (напр. Доски)"
+          placeholder="Kategorian nimi (esim. Lauta)"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
         />
         <button type="button" className="button button--secondary" onClick={handleAdd}>
-          Добавить
+          Lisää
         </button>
       </div>
     </section>

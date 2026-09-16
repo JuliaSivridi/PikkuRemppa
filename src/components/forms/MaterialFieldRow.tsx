@@ -37,10 +37,10 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
       if (material.price === undefined && result.data.price !== undefined) patch.price = result.data.price
       onChange(patch)
       setParseStatus('success')
-      setParseMessage('Данные подставлены (проверьте перед сохранением)')
+      setParseMessage('Tiedot täytetty automaattisesti (tarkista ennen tallennusta)')
     } else {
       setParseStatus('error')
-      setParseMessage('Не удалось спарсить страницу — заполните поля вручную')
+      setParseMessage('Tuotesivun hakeminen epäonnistui — täytä tiedot käsin')
     }
   }
 
@@ -48,14 +48,14 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
     <div className="material-field-row">
       <div className="material-field-row__top">
         <label className="field">
-          <span className="field__label">Категория</span>
+          <span className="field__label">Kategoria</span>
           <select
             className="field__input"
             value={material.categoryId}
             required
             onChange={(e) => handleCategoryChange(e.target.value)}
           >
-            <option value="">Выберите категорию</option>
+            <option value="">Valitse kategoria</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -63,14 +63,14 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
             ))}
           </select>
         </label>
-        <button type="button" className="icon-button icon-button--danger" onClick={onRemove} aria-label="Удалить материал">
+        <button type="button" className="icon-button icon-button--danger" onClick={onRemove} aria-label="Poista materiaali">
           ×
         </button>
       </div>
 
       <div className="material-field-row__grid">
         <label className="field">
-          <span className="field__label">Название</span>
+          <span className="field__label">Nimi</span>
           <input
             className="field__input"
             type="text"
@@ -79,7 +79,7 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
           />
         </label>
         <label className="field field--compact">
-          <span className="field__label">Кол-во</span>
+          <span className="field__label">Määrä</span>
           <input
             className="field__input"
             type="number"
@@ -89,17 +89,17 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
           />
         </label>
         <label className="field field--compact">
-          <span className="field__label">Единица</span>
+          <span className="field__label">Yksikkö</span>
           <input
             className="field__input"
             type="text"
-            placeholder="шт, л, м²"
+            placeholder="kpl, l, m²"
             value={material.unit ?? ''}
             onChange={(e) => onChange({ unit: e.target.value })}
           />
         </label>
         <label className="field field--compact">
-          <span className="field__label">Цена, €</span>
+          <span className="field__label">Hinta, €</span>
           <input
             className="field__input"
             type="number"
@@ -125,7 +125,7 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
 
       <div className="material-field-row__store">
         <label className="field">
-          <span className="field__label">Ссылка на товар</span>
+          <span className="field__label">Linkki kauppaan</span>
           <input
             className="field__input"
             type="url"
@@ -140,7 +140,7 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
           disabled={!material.storeUrl || parseStatus === 'loading'}
           onClick={handleParse}
         >
-          {parseStatus === 'loading' ? 'Парсим…' : 'Спарсить'}
+          {parseStatus === 'loading' ? 'Haetaan…' : 'Hae tiedot'}
         </button>
       </div>
       {parseMessage && (

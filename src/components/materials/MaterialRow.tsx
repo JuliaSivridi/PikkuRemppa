@@ -33,7 +33,7 @@ export function MaterialRow({ material, category, mode, room, repairDate }: Mate
         })}
         {material.storeUrl && (
           <a className="material-row__link" href={material.storeUrl} target="_blank" rel="noreferrer">
-            Ссылка на товар
+            Linkki tuotteeseen
           </a>
         )}
       </div>

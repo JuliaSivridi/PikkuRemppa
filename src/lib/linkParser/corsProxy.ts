@@ -29,5 +29,5 @@ export async function fetchHtmlViaProxy(url: string, proxies: CorsProxy[] = DEFA
     }
   }
 
-  throw lastError instanceof Error ? lastError : new Error('Не удалось загрузить страницу через прокси')
+  throw lastError instanceof Error ? lastError : new Error('Sivun lataaminen välityspalvelimen kautta epäonnistui')
 }

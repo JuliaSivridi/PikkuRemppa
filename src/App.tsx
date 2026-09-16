@@ -19,12 +19,12 @@ export default function App() {
       title="PikkuRemppa"
       headerRight={
         screen === 'main' ? (
-          <button type="button" className="icon-button" aria-label="Настройки" onClick={() => setScreen('settings')}>
+          <button type="button" className="icon-button" aria-label="Asetukset" onClick={() => setScreen('settings')}>
             ⚙
           </button>
         ) : (
           <button type="button" className="button button--secondary" onClick={() => setScreen('main')}>
-            ← Назад
+            ← Takaisin
           </button>
         )
       }
@@ -35,7 +35,7 @@ export default function App() {
         <>
           <ViewToggle view={view} onChange={setView} />
           {view === 'repairs' ? <RepairsList /> : <MaterialsView />}
-          {view === 'repairs' && <Fab onClick={() => setShowAddForm(true)} label="Добавить ремонт" />}
+          {view === 'repairs' && <Fab onClick={() => setShowAddForm(true)} label="Lisää remontti" />}
         </>
       )}
 

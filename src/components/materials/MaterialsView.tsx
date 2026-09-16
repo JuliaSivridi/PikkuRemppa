@@ -14,7 +14,7 @@ export function MaterialsView() {
       <CategoryTagCloud categories={presentCategories} selected={selected} onToggle={toggle} onClear={clear} />
       <div className="materials-view__list">
         {filtered.length === 0 ? (
-          <p className="empty-state">Материалов пока нет.</p>
+          <p className="empty-state">Materiaaleja ei ole vielä lisätty.</p>
         ) : (
           filtered.map((m) => (
             <MaterialRow

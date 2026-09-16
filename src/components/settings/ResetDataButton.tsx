@@ -4,19 +4,20 @@ export function ResetDataButton() {
   const resetToSeed = useStore((s) => s.resetToSeed)
 
   function handleClick() {
-    if (confirm('Удалить все текущие данные и вернуть тестовый набор?')) {
+    if (confirm('Poistetaanko kaikki nykyiset tiedot ja palautetaanko esimerkkitiedot?')) {
       resetToSeed()
     }
   }
 
   return (
     <section className="settings-section">
-      <h3>Сброс данных</h3>
+      <h3>Tietojen nollaus</h3>
       <p className="settings-section__hint">
-        Удаляет все ремонты, материалы, комнаты и категории и заново заполняет приложение тестовыми данными.
+        Poistaa kaikki remontit, materiaalit, kohteet ja kategoriat, ja täyttää sovelluksen uudelleen
+        esimerkkitiedoilla.
       </p>
       <button type="button" className="button button--danger" onClick={handleClick}>
-        Сбросить к тестовым данным
+        Palauta esimerkkitiedot
       </button>
     </section>
   )

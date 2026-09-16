@@ -3,7 +3,7 @@ interface FabProps {
   label?: string
 }
 
-export function Fab({ onClick, label = 'Добавить' }: FabProps) {
+export function Fab({ onClick, label = 'Lisää' }: FabProps) {
   return (
     <button type="button" className="fab" onClick={onClick} aria-label={label} title={label}>
       +

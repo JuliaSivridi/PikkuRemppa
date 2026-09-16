@@ -13,8 +13,8 @@ export async function parseProductUrl(url: string): Promise<ParseResult> {
     const og = parseOpenGraph(doc)
     if (og) return { ok: true, data: og, source: 'og' }
 
-    return { ok: false, error: 'На странице не найдены данные о товаре' }
+    return { ok: false, error: 'Sivulta ei löytynyt tuotetietoja' }
   } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : 'Не удалось загрузить страницу' }
+    return { ok: false, error: err instanceof Error ? err.message : 'Sivun lataaminen epäonnistui' }
   }
 }

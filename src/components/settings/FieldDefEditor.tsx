@@ -11,7 +11,7 @@ function slugify(label: string, existingKeys: string[]): string {
     label
       .trim()
       .toLowerCase()
-      .replace(/[^a-zA-Zа-яА-Я0-9]+/g, '-')
+      .replace(/[^a-zA-ZäöåÄÖÅ0-9]+/g, '-')
       .replace(/^-+|-+$/g, '') || 'field'
   let key = base
   let i = 2
@@ -48,35 +48,35 @@ export function FieldDefEditor({ fields, onChange }: FieldDefEditorProps) {
         {fields.map((f) => (
           <li key={f.key} className="settings-list__item">
             <span>
-              {f.label} <span className="settings-list__hint">({f.type === 'number' ? 'число' : 'текст'})</span>
+              {f.label} <span className="settings-list__hint">({f.type === 'number' ? 'numero' : 'teksti'})</span>
             </span>
             <button
               type="button"
               className="icon-button icon-button--danger"
-              aria-label="Удалить поле"
+              aria-label="Poista kenttä"
               onClick={() => handleRemove(f.key)}
             >
               ×
             </button>
           </li>
         ))}
-        {fields.length === 0 && <li className="empty-state empty-state--inline">Полей нет</li>}
+        {fields.length === 0 && <li className="empty-state empty-state--inline">Kenttiä ei ole</li>}
       </ul>
       <div className="settings-add-row">
         <input
           className="field__input"
           type="text"
-          placeholder="Название поля (напр. Размеры)"
+          placeholder="Kentän nimi (esim. Mitat)"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
         />
         <select className="field__input" value={type} onChange={(e) => setType(e.target.value as FieldType)}>
-          <option value="text">Текст</option>
-          <option value="number">Число</option>
+          <option value="text">Teksti</option>
+          <option value="number">Numero</option>
         </select>
         <button type="button" className="button button--secondary" onClick={handleAdd}>
-          + Поле
+          + Kenttä
         </button>
       </div>
     </div>

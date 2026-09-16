@@ -28,13 +28,13 @@ export function MaterialSubForm({ materials, categories, onChange }: MaterialSub
   return (
     <div className="material-sub-form">
       <div className="material-sub-form__header">
-        <span className="field__label">Материалы</span>
+        <span className="field__label">Materiaalit</span>
         <button type="button" className="button button--secondary" onClick={addRow}>
-          + Материал
+          + Materiaali
         </button>
       </div>
 
-      {materials.length === 0 && <p className="empty-state empty-state--inline">Материалы не добавлены</p>}
+      {materials.length === 0 && <p className="empty-state empty-state--inline">Materiaaleja ei ole lisätty</p>}
 
       {materials.map((material, index) => (
         <MaterialFieldRow
