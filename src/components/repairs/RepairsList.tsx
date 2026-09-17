@@ -7,22 +7,29 @@ import { RepairsTable } from './RepairsTable'
 import { FilterButton } from '../common/FilterButton'
 import { Modal } from '../common/Modal'
 
-export function RepairsList() {
+interface RepairsListProps {
+  onAdd: () => void
+}
+
+export function RepairsList({ onAdd }: RepairsListProps) {
   const repairs = useRepairsWithMaterials()
   const filters = useRepairFilters(repairs)
   const [showFilters, setShowFilters] = useState(false)
 
-  if (repairs.length === 0) {
-    return <p className="empty-state">Yhtään remonttia ei ole vielä lisätty. Paina «+» lisätäksesi ensimmäisen.</p>
-  }
-
   return (
     <div className="list-view">
       <div className="list-view__toolbar">
-        <FilterButton activeCount={filters.activeCount} onClick={() => setShowFilters(true)} />
+        <button type="button" className="button button--primary list-view__add-button" onClick={onAdd}>
+          Lisää remontti
+        </button>
+        {repairs.length > 0 && (
+          <FilterButton activeCount={filters.activeCount} onClick={() => setShowFilters(true)} />
+        )}
       </div>
 
-      {filters.filtered.length === 0 ? (
+      {repairs.length === 0 ? (
+        <p className="empty-state">Yhtään remonttia ei ole vielä lisätty.</p>
+      ) : filters.filtered.length === 0 ? (
         <p className="empty-state">Ei suodattimiin sopivia remontteja.</p>
       ) : (
         <>

@@ -34,7 +34,7 @@ export default function App() {
       ) : (
         <>
           <ViewToggle view={view} onChange={setView} />
-          {view === 'repairs' ? <RepairsList /> : <MaterialsView />}
+          {view === 'repairs' ? <RepairsList onAdd={() => setShowAddForm(true)} /> : <MaterialsView />}
           {view === 'repairs' && <Fab onClick={() => setShowAddForm(true)} label="Lisää remontti" />}
         </>
       )}

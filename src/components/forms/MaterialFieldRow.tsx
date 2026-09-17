@@ -67,38 +67,76 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
 
   return (
     <div className="material-field-row">
-      <div className="material-field-row__top">
+      <div className="material-field-row__store">
         <label className="field">
-          <span className="field__label">Kategoria</span>
-          <select
+          <span className="field__label">Linkki kauppaan</span>
+          <input
             className="field__input"
-            value={material.categoryId}
-            required
-            onChange={(e) => handleCategoryChange(e.target.value)}
-          >
-            <option value="">Valitse kategoria</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+            type="url"
+            placeholder="https://www.k-rauta.fi/..."
+            value={material.storeUrl ?? ''}
+            onChange={(e) => onChange({ storeUrl: e.target.value })}
+          />
         </label>
+        <button
+          type="button"
+          className="button button--secondary"
+          disabled={!material.storeUrl || parseStatus === 'loading'}
+          onClick={handleParse}
+        >
+          {parseStatus === 'loading' ? 'Haetaan…' : 'Hae tiedot'}
+        </button>
         <button type="button" className="icon-button icon-button--danger" onClick={onRemove} aria-label="Poista materiaali">
           ×
         </button>
       </div>
+      {parseMessage && (
+        <p className={`material-field-row__parse-message material-field-row__parse-message--${parseStatus}`}>
+          {parseMessage}
+        </p>
+      )}
+
+      <label className="field">
+        <span className="field__label">Nimi</span>
+        <input
+          className="field__input"
+          type="text"
+          value={material.name}
+          onChange={(e) => onChange({ name: e.target.value })}
+        />
+      </label>
+
+      <label className="field">
+        <span className="field__label">Kategoria</span>
+        <select
+          className="field__input"
+          value={material.categoryId}
+          required
+          onChange={(e) => handleCategoryChange(e.target.value)}
+        >
+          <option value="">Valitse kategoria</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      {category && category.fields.length > 0 && (
+        <div className="material-field-row__grid">
+          {category.fields.map((def) => (
+            <DynamicFieldInput
+              key={def.key}
+              def={def}
+              value={material.fieldValues[def.key] ?? ''}
+              onChange={(value) => handleFieldValueChange(def.key, value)}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="material-field-row__grid">
-        <label className="field">
-          <span className="field__label">Nimi</span>
-          <input
-            className="field__input"
-            type="text"
-            value={material.name}
-            onChange={(e) => onChange({ name: e.target.value })}
-          />
-        </label>
         <label className="field field--compact">
           <span className="field__label">Määrä</span>
           <input
@@ -132,45 +170,6 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
           />
         </label>
       </div>
-
-      {category && category.fields.length > 0 && (
-        <div className="material-field-row__grid">
-          {category.fields.map((def) => (
-            <DynamicFieldInput
-              key={def.key}
-              def={def}
-              value={material.fieldValues[def.key] ?? ''}
-              onChange={(value) => handleFieldValueChange(def.key, value)}
-            />
-          ))}
-        </div>
-      )}
-
-      <div className="material-field-row__store">
-        <label className="field">
-          <span className="field__label">Linkki kauppaan</span>
-          <input
-            className="field__input"
-            type="url"
-            placeholder="https://www.k-rauta.fi/..."
-            value={material.storeUrl ?? ''}
-            onChange={(e) => onChange({ storeUrl: e.target.value })}
-          />
-        </label>
-        <button
-          type="button"
-          className="button button--secondary"
-          disabled={!material.storeUrl || parseStatus === 'loading'}
-          onClick={handleParse}
-        >
-          {parseStatus === 'loading' ? 'Haetaan…' : 'Hae tiedot'}
-        </button>
-      </div>
-      {parseMessage && (
-        <p className={`material-field-row__parse-message material-field-row__parse-message--${parseStatus}`}>
-          {parseMessage}
-        </p>
-      )}
 
       <label className="checkbox-field">
         <input

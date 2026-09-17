@@ -1,4 +1,4 @@
-import type { FilterTagItem } from '../../hooks/useRepairFilters'
+import type { FilterTagItem } from '../../hooks/filterTypes'
 
 interface TagFilterGroupProps {
   label: string
@@ -21,7 +21,7 @@ export function TagFilterGroup({ label, items, selected, onToggle }: TagFilterGr
               key={item.id}
               type="button"
               className={`tag tag--toggle ${isSelected ? 'tag--selected' : ''}`}
-              style={isSelected ? undefined : { background: item.color.bg, color: item.color.text }}
+              style={!isSelected && item.color ? { background: item.color.bg, color: item.color.text } : undefined}
               onClick={() => onToggle(item.id)}
             >
               {item.name}

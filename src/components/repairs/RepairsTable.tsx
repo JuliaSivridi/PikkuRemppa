@@ -48,6 +48,7 @@ export function RepairsTable({ repairs }: RepairsTableProps) {
     <table className="repairs-table">
       <thead>
         <tr>
+          <th></th>
           <th>Päivämäärä</th>
           <th>Tilanne</th>
           <th>Prioriteetti</th>
@@ -65,21 +66,23 @@ export function RepairsTable({ repairs }: RepairsTableProps) {
           return (
             <Fragment key={repair.id}>
               <tr className="repairs-table__row">
+                <td className="repairs-table__toggle-cell">
+                  <button
+                    type="button"
+                    className="repairs-table__toggle"
+                    onClick={() => toggle(repair.id)}
+                    disabled={!hasMaterials}
+                    aria-label={collapsed ? 'Näytä materiaalit' : 'Piilota materiaalit'}
+                  >
+                    {hasMaterials ? (collapsed ? '▸' : '▾') : ''}
+                  </button>
+                </td>
                 <td>{formatDate(repair.date)}</td>
                 <td>{repair.status && <Tag color={repair.statusColor}>{repair.status.name}</Tag>}</td>
                 <td>{repair.priority && <Tag color={repair.priorityColor}>{repair.priority.name}</Tag>}</td>
                 <td>{repair.executor && EXECUTOR_LABEL[repair.executor]}</td>
                 <td className="repairs-table__description">
                   <div className="repairs-table__description-inner">
-                    <button
-                      type="button"
-                      className="repairs-table__toggle"
-                      onClick={() => toggle(repair.id)}
-                      disabled={!hasMaterials}
-                      aria-label={collapsed ? 'Näytä materiaalit' : 'Piilota materiaalit'}
-                    >
-                      {hasMaterials ? (collapsed ? '▸' : '▾') : ''}
-                    </button>
                     <Tag color={repair.roomColor}>{repair.room?.name ?? '—'}</Tag>
                     <span>{repair.description}</span>
                   </div>
@@ -102,13 +105,12 @@ export function RepairsTable({ repairs }: RepairsTableProps) {
 
               {hasMaterials && !collapsed && (
                 <tr className="repairs-table__materials-row">
-                  <td colSpan={7}>
+                  <td colSpan={8}>
                     <table className="materials-table">
                       <thead>
                         <tr>
                           <th>Tyyppi</th>
                           <th>Nimi</th>
-                          <th>Tiedot</th>
                           <th>Määrä</th>
                           <th>Hinta</th>
                         </tr>
@@ -120,8 +122,8 @@ export function RepairsTable({ repairs }: RepairsTableProps) {
                             <tr key={m.id}>
                               <td>{category && <Tag>{category.name}</Tag>}</td>
                               <td className="materials-table__name">
-                                <div className="materials-table__name-inner">
-                                  <span>{m.name}</span>
+                                <div className="materials-table__name-line">
+                                  <span className="materials-table__name-text">{m.name}</span>
                                   {m.storeUrl && (
                                     <a
                                       href={m.storeUrl}
@@ -134,9 +136,9 @@ export function RepairsTable({ repairs }: RepairsTableProps) {
                                     </a>
                                   )}
                                 </div>
-                              </td>
-                              <td className="materials-table__fields" title={dynamicFieldsTitle(m, category)}>
-                                {dynamicFieldValues(m, category).join(' · ')}
+                                <div className="materials-table__fields" title={dynamicFieldsTitle(m, category)}>
+                                  {dynamicFieldValues(m, category).join(' · ')}
+                                </div>
                               </td>
                               <td className="materials-table__qty">{formatQuantity(m.quantity, m.unit)}</td>
                               <td className="materials-table__price">
