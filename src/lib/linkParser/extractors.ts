@@ -155,6 +155,30 @@ export function parseBiltemaProductData(html: string): ParsedProduct | null {
   }
 }
 
+// Jina's default reader mode extracts a page's readable content as markdown, always via a
+// full headless-browser render — used as a last-resort fallback for client-rendered SPAs
+// once the raw-HTML/JSON-LD attempts have all failed. There's no DOM to query here, so the
+// product name and price get pulled out of the extracted text instead.
+export function parseProductFromMarkdown(markdown: string): ParsedProduct | null {
+  const titleMatch = markdown.match(/^Title:\s*(.+)$/m)
+  const name = titleMatch?.[1]?.trim()
+
+  // Matches "71,20 €", "71.20€", "71 €", and also a whole/decimal part split across
+  // whitespace or blank lines ("71\n\n20\n\n€/ kpl"), which is how some sites' price
+  // components (big number + superscript cents) end up looking once flattened to text.
+  const priceMatch = markdown.match(/(\d{1,6})(?:[.,]|\s+)(\d{2})?\s*€|(\d{1,6})\s*€/)
+  let price: number | undefined
+  if (priceMatch) {
+    const whole = priceMatch[1] ?? priceMatch[3]
+    const cents = priceMatch[2]
+    const value = Number.parseFloat(cents ? `${whole}.${cents}` : whole)
+    if (!Number.isNaN(value)) price = value
+  }
+
+  if (!name && price === undefined) return null
+  return { name, price }
+}
+
 const HOME_CRUMB_LABELS = new Set(['etusivu', 'home', 'koti', 'start', 'hem'])
 
 // Most storefronts render a visible breadcrumb nav (Etusivu > Category > Subcategory [> Product]).

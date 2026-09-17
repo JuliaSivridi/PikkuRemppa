@@ -1,8 +1,15 @@
-import { fetchHtmlFast, fetchHtmlRendered } from './corsProxy'
-import { parseBiltemaProductData, parseBreadcrumbs, parseJsonLd, parseOpenGraph, suggestCategoryFromBreadcrumbs } from './extractors'
+import { fetchHtmlFast, fetchRenderedText } from './corsProxy'
+import {
+  parseBiltemaProductData,
+  parseBreadcrumbs,
+  parseJsonLd,
+  parseOpenGraph,
+  parseProductFromMarkdown,
+  suggestCategoryFromBreadcrumbs,
+} from './extractors'
 import type { ParsedProduct, ParseResult } from './types'
 
-function extractProduct(html: string): { product: ParsedProduct; source: 'json-ld' | 'og' | 'inline-data' } | null {
+function extractFromHtml(html: string): { product: ParsedProduct; source: 'json-ld' | 'og' | 'inline-data' } | null {
   const doc = new DOMParser().parseFromString(html, 'text/html')
 
   const jsonLd = parseJsonLd(doc)
@@ -22,25 +29,26 @@ function extractProduct(html: string): { product: ParsedProduct; source: 'json-l
 export async function parseProductUrl(url: string): Promise<ParseResult> {
   try {
     // Most sites server-render their product data, so try the fast path first...
-    let html = await fetchHtmlFast(url)
-    let found = extractProduct(html)
+    const html = await fetchHtmlFast(url)
+    const found = extractFromHtml(html)
 
-    // ...and only pay for a rendered (JS-executed) fetch when that came up empty, e.g. a
-    // client-rendered SPA (Stark) or a site that injects its JSON-LD via a <script> that
-    // runs after load (Biltema).
-    if (!found) {
-      html = await fetchHtmlRendered(url)
-      found = extractProduct(html)
+    if (found) {
+      const breadcrumbs = parseBreadcrumbs(new DOMParser().parseFromString(html, 'text/html'))
+      return {
+        ok: true,
+        data: { ...found.product, suggestedCategory: suggestCategoryFromBreadcrumbs(breadcrumbs, found.product.name) },
+        source: found.source,
+      }
     }
 
-    if (!found) return { ok: false, error: 'Sivulta ei löytynyt tuotetietoja' }
+    // ...and only pay for a full render when that came up empty, e.g. a client-rendered
+    // SPA (Stark-Suomi) with no product data in the raw response. There's no DOM to read
+    // a breadcrumb trail from here, so the category won't get auto-suggested for these.
+    const markdown = await fetchRenderedText(url)
+    const product = parseProductFromMarkdown(markdown)
+    if (!product) return { ok: false, error: 'Sivulta ei löytynyt tuotetietoja' }
 
-    const breadcrumbs = parseBreadcrumbs(new DOMParser().parseFromString(html, 'text/html'))
-    return {
-      ok: true,
-      data: { ...found.product, suggestedCategory: suggestCategoryFromBreadcrumbs(breadcrumbs, found.product.name) },
-      source: found.source,
-    }
+    return { ok: true, data: product, source: 'rendered-text' }
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : 'Sivun lataaminen epäonnistui' }
   }

@@ -6,5 +6,5 @@ export interface ParsedProduct {
 }
 
 export type ParseResult =
-  | { ok: true; data: ParsedProduct; source: 'json-ld' | 'og' | 'inline-data' }
+  | { ok: true; data: ParsedProduct; source: 'json-ld' | 'og' | 'inline-data' | 'rendered-text' }
   | { ok: false; error: string }

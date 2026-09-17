@@ -6,7 +6,7 @@
 // durable choice for this best-effort feature.
 const JINA_READER_BASE = 'https://r.jina.ai/'
 const FAST_TIMEOUT_MS = 12000
-const RENDERED_TIMEOUT_MS = 20000
+const RENDERED_TIMEOUT_MS = 30000
 
 async function fetchWithTimeout(url: string, timeoutMs: number, headers: Record<string, string>): Promise<Response> {
   const controller = new AbortController()
@@ -30,19 +30,15 @@ export async function fetchHtmlFast(url: string): Promise<string> {
   return response.text()
 }
 
-// Some sites (client-rendered SPAs, or ones that inject their JSON-LD via a <script>
-// that runs after load) don't have product data in the raw response. This asks Jina's
-// renderer to wait until the JSON-LD or an OG title tag actually shows up in the DOM.
-export async function fetchHtmlRendered(url: string): Promise<string> {
-  const response = await fetchWithTimeout(
-    JINA_READER_BASE + url,
-    RENDERED_TIMEOUT_MS,
-    {
-      'X-Return-Format': 'html',
-      'X-Wait-For-Selector': 'script[type="application/ld+json"], meta[property="og:title"]',
-      'X-Timeout': '15',
-    },
-  )
+// For sites with no product data in the raw response (client-rendered SPAs, e.g.
+// Stark-Suomi's Angular storefront): asking for raw HTML plus a "wait for this selector"
+// header turned out to be unreliable — it started coming back with the same unrendered
+// shell as the fast fetch, as if the wait was being skipped. Jina's *default* reader mode
+// (markdown, no X-Return-Format override) reliably runs the full headless-browser render
+// regardless, so that's used here instead and the product is read out of the extracted
+// text rather than out of a `<script type="application/ld+json">` tag.
+export async function fetchRenderedText(url: string): Promise<string> {
+  const response = await fetchWithTimeout(JINA_READER_BASE + url, RENDERED_TIMEOUT_MS, {})
   if (!response.ok) throw new Error(`HTTP ${response.status}`)
   return response.text()
 }
