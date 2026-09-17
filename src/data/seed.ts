@@ -96,7 +96,7 @@ const repairs: Repair[] = [
     priorityId: 'priority-high',
     executor: 'self',
     description: 'Terassin laudoituksen uusiminen douglaskuusilaudalla',
-    cost: 450,
+    cost: 0,
   },
   {
     id: 'repair-2',
@@ -106,7 +106,7 @@ const repairs: Repair[] = [
     priorityId: 'priority-high',
     executor: 'service',
     description: 'Kylpyhuoneen seinien laatoitus',
-    cost: 950,
+    cost: 735,
   },
   {
     id: 'repair-3',
@@ -116,7 +116,7 @@ const repairs: Repair[] = [
     priorityId: 'priority-medium',
     executor: 'self',
     description: 'Olohuoneen seinien pohjustus ja maalaus',
-    cost: 140,
+    cost: 0,
   },
   {
     id: 'repair-4',
@@ -126,7 +126,7 @@ const repairs: Repair[] = [
     priorityId: 'priority-low',
     executor: 'self',
     description: 'Eteisen tapetointi',
-    cost: 90,
+    cost: 0,
   },
   {
     id: 'repair-5',

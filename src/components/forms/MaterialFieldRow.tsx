@@ -171,6 +171,15 @@ export function MaterialFieldRow({ material, categories, onChange, onRemove }: M
           {parseMessage}
         </p>
       )}
+
+      <label className="checkbox-field">
+        <input
+          type="checkbox"
+          checked={material.includeInTotal ?? true}
+          onChange={(e) => onChange({ includeInTotal: e.target.checked })}
+        />
+        Sisällytä remontin kokonaishintaan
+      </label>
     </div>
   )
 }

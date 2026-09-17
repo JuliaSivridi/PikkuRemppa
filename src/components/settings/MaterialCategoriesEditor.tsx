@@ -4,18 +4,39 @@ import { FieldDefEditor } from './FieldDefEditor'
 
 export function MaterialCategoriesEditor() {
   const categories = useStore((s) => s.materialCategories)
+  const materials = useStore((s) => s.materials)
   const addCategory = useStore((s) => s.addCategory)
   const removeCategory = useStore((s) => s.removeCategory)
   const updateCategoryFields = useStore((s) => s.updateCategoryFields)
+  const mergeCategories = useStore((s) => s.mergeCategories)
 
   const [name, setName] = useState('')
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [sourceId, setSourceId] = useState('')
+  const [targetId, setTargetId] = useState('')
 
   function handleAdd() {
     const trimmed = name.trim()
     if (!trimmed) return
     addCategory(trimmed)
     setName('')
+  }
+
+  function handleMerge() {
+    if (!sourceId || !targetId || sourceId === targetId) return
+    const source = categories.find((c) => c.id === sourceId)
+    const target = categories.find((c) => c.id === targetId)
+    if (!source || !target) return
+    const count = materials.filter((m) => m.categoryId === sourceId).length
+    if (
+      confirm(
+        `Siirretään ${count} materiaalia kategoriasta "${source.name}" kategoriaan "${target.name}". Kategoria "${source.name}" poistetaan. Jatketaanko?`,
+      )
+    ) {
+      mergeCategories(sourceId, targetId)
+      setSourceId('')
+      setTargetId('')
+    }
   }
 
   return (
@@ -64,6 +85,42 @@ export function MaterialCategoriesEditor() {
           Lisää
         </button>
       </div>
+
+      {categories.length > 1 && (
+        <div className="category-merge">
+          <span className="field__label">Yhdistä kaksi kategoriaa samaksi</span>
+          <p className="field__hint">
+            Kaikki materiaalit siirtyvät valitusta kategoriasta kohteeseen, ja alkuperäinen kategoria poistetaan.
+          </p>
+          <div className="category-merge__row">
+            <select className="field__input" value={sourceId} onChange={(e) => setSourceId(e.target.value)}>
+              <option value="">Mistä kategoriasta</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id} disabled={c.id === targetId}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <span className="category-merge__arrow">→</span>
+            <select className="field__input" value={targetId} onChange={(e) => setTargetId(e.target.value)}>
+              <option value="">Mihin kategoriaan</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id} disabled={c.id === sourceId}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="button button--secondary"
+              disabled={!sourceId || !targetId || sourceId === targetId}
+              onClick={handleMerge}
+            >
+              Yhdistä
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

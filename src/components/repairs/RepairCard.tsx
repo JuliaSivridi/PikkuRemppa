@@ -33,7 +33,7 @@ export function RepairCard({ repair }: RepairCardProps) {
           <p className="repair-card__description">{repair.description}</p>
         </div>
         <div className="repair-card__header-right">
-          <span className="repair-card__cost">{formatCurrency(repair.cost)}</span>
+          <span className="repair-card__cost">{formatCurrency(repair.total)}</span>
           <button
             type="button"
             className="icon-button icon-button--danger"

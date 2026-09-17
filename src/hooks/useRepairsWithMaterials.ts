@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useStore } from '../store/store'
 import type { Material, Priority, Repair, Room, Status } from '../types'
 import { priorityColor, roomColor, statusColor, type TagColor } from '../utils/colors'
+import { repairTotal } from '../utils/cost'
 
 export interface RepairWithMaterials extends Repair {
   room: Room | undefined
@@ -11,6 +12,7 @@ export interface RepairWithMaterials extends Repair {
   priority: Priority | undefined
   priorityColor: TagColor | undefined
   materials: Material[]
+  total: number
 }
 
 export function useRepairsWithMaterials(): RepairWithMaterials[] {
@@ -31,6 +33,7 @@ export function useRepairsWithMaterials(): RepairWithMaterials[] {
         const room = roomsById.get(repair.roomId)
         const statusEntry = statusesById.get(repair.statusId)
         const priorityEntry = repair.priorityId ? prioritiesById.get(repair.priorityId) : undefined
+        const repairMaterials = materials.filter((m) => m.repairId === repair.id)
 
         return {
           ...repair,
@@ -40,7 +43,8 @@ export function useRepairsWithMaterials(): RepairWithMaterials[] {
           statusColor: statusEntry ? statusColor(statusEntry.index) : undefined,
           priority: priorityEntry?.priority,
           priorityColor: priorityEntry ? priorityColor(priorityEntry.index, priorities.length) : undefined,
-          materials: materials.filter((m) => m.repairId === repair.id),
+          materials: repairMaterials,
+          total: repairTotal(repair, repairMaterials),
         }
       })
   }, [repairs, materials, rooms, statuses, priorities])

@@ -3,6 +3,7 @@ import { useRepairsWithMaterials } from '../../hooks/useRepairsWithMaterials'
 import { useRepairFilters } from '../../hooks/useRepairFilters'
 import { RepairFilters } from './RepairFilters'
 import { RepairCard } from './RepairCard'
+import { RepairsTable } from './RepairsTable'
 import { FilterButton } from '../common/FilterButton'
 import { Modal } from '../common/Modal'
 
@@ -24,11 +25,16 @@ export function RepairsList() {
       {filters.filtered.length === 0 ? (
         <p className="empty-state">Ei suodattimiin sopivia remontteja.</p>
       ) : (
-        <div className="repairs-list">
-          {filters.filtered.map((repair) => (
-            <RepairCard key={repair.id} repair={repair} />
-          ))}
-        </div>
+        <>
+          <div className="repairs-list repairs-list--mobile">
+            {filters.filtered.map((repair) => (
+              <RepairCard key={repair.id} repair={repair} />
+            ))}
+          </div>
+          <div className="repairs-table-wrap">
+            <RepairsTable repairs={filters.filtered} />
+          </div>
+        </>
       )}
 
       {showFilters && (

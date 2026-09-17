@@ -9,7 +9,7 @@ interface MaterialSubFormProps {
 }
 
 function emptyMaterial(): DraftMaterialRow {
-  return { _key: generateId(), categoryId: '', name: '', fieldValues: {} }
+  return { _key: generateId(), categoryId: '', name: '', fieldValues: {}, includeInTotal: true }
 }
 
 export function MaterialSubForm({ materials, categories, onChange }: MaterialSubFormProps) {

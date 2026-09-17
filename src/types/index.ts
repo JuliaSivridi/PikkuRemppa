@@ -51,6 +51,10 @@ export interface Material {
   price?: number
   storeUrl?: string
   fieldValues: Record<string, string>
+  // Whether this material's price counts toward the repair's total cost. Defaults to true
+  // when unset, so a person can e.g. leave the repair's own labor cost at 0 for DIY work
+  // and still get a meaningful total made up of materials only.
+  includeInTotal?: boolean
 }
 
 export type DraftMaterial = Omit<Material, 'id' | 'repairId'>

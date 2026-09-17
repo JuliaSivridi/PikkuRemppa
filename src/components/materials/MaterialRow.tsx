@@ -21,7 +21,15 @@ export function MaterialRow({ material, category, mode, room, repairDate }: Mate
       </div>
       <div className="material-row__details">
         <span>{formatQuantity(material.quantity, material.unit)}</span>
-        <span>{formatCurrency(material.price)}</span>
+        <span>
+          {formatCurrency(material.price)}
+          {material.includeInTotal === false && (
+            <span className="material-row__excluded" title="Ei lasketa remontin kokonaishintaan">
+              {' '}
+              (ei summassa)
+            </span>
+          )}
+        </span>
         {fieldEntries.map((f) => {
           const v = material.fieldValues[f.key]
           if (!v) return null

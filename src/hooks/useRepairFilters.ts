@@ -53,8 +53,8 @@ export function useRepairFilters(repairs: RepairWithMaterials[]) {
       if (roomIds.size > 0 && !roomIds.has(repair.roomId)) return false
       if (statusIds.size > 0 && !statusIds.has(repair.statusId)) return false
       if (priorityIds.size > 0 && (!repair.priorityId || !priorityIds.has(repair.priorityId))) return false
-      if (costMin !== undefined && repair.cost < costMin) return false
-      if (costMax !== undefined && repair.cost > costMax) return false
+      if (costMin !== undefined && repair.total < costMin) return false
+      if (costMax !== undefined && repair.total > costMax) return false
       if (needle) {
         const inDescription = repair.description.toLowerCase().includes(needle)
         const inMaterials = repair.materials.some((m) => m.name.toLowerCase().includes(needle))

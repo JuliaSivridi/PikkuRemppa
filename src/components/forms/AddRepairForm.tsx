@@ -70,7 +70,7 @@ export function AddRepairForm({ onClose }: AddRepairFormProps) {
           </label>
 
           <label className="field">
-            <span className="field__label">Kustannus, €</span>
+            <span className="field__label">Työkustannus, €</span>
             <input
               className="field__input"
               type="number"
@@ -79,6 +79,7 @@ export function AddRepairForm({ onClose }: AddRepairFormProps) {
               value={cost ?? ''}
               onChange={(e) => setCost(e.target.value === '' ? undefined : Number(e.target.value))}
             />
+            <span className="field__hint">Oma tai palveluntarjoajan työ, ilman materiaaleja</span>
           </label>
 
           <label className="field">

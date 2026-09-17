@@ -28,6 +28,7 @@ interface AppState {
   renameCategory: (id: string, name: string) => void
   updateCategoryFields: (categoryId: string, fields: FieldDef[]) => void
   removeCategory: (id: string) => void
+  mergeCategories: (sourceId: string, targetId: string) => void
 
   addRepair: (input: Omit<Repair, 'id'>, materials: DraftMaterial[]) => void
   removeRepair: (id: string) => void
@@ -95,6 +96,15 @@ export const useStore = create<AppState>()(
       removeCategory: (id) =>
         set((state) => ({
           materialCategories: state.materialCategories.filter((c) => c.id !== id),
+        })),
+
+      // Reassigns every material from the source category to the target category (their
+      // fieldValues stay as-is even if the target's field defs differ — see FieldDefEditor)
+      // and removes the now-empty source category.
+      mergeCategories: (sourceId, targetId) =>
+        set((state) => ({
+          materials: state.materials.map((m) => (m.categoryId === sourceId ? { ...m, categoryId: targetId } : m)),
+          materialCategories: state.materialCategories.filter((c) => c.id !== sourceId),
         })),
 
       addRepair: (input, draftMaterials) =>
